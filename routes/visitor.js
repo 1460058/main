@@ -1,5 +1,6 @@
 const express = require('express');
 const dateFormat = require('dateformat');
+const e = require('express');
 
 const router = express.Router();
 const conn = require('../database').init()
@@ -70,30 +71,55 @@ router.get('/dateSearch', (req, res) => {
 
 router.get('/editRemark/:id', (req, res) => {
     const idx = req.params.id;
-    const sql = 'SELECT remark FROM visitortable WHERE id = ' + idx;
+    const sql = 'SELECT id, remark FROM visitortable WHERE id = ' + idx;
 
     conn.query(sql, (err, row) => {
         if (err) {
             console.log(err)
         } else {
-            res.send(row[0].remark)
+            res.send(row[0])
         }
     })
 })
 
 router.patch('/editRemark/:id', (req, res) => {
     const idx = req.params.id;
-    const remark_text = req.body.remark_text
+    const remark_text = req.body.remark_text;
 
     const sql = 'UPDATE visitortable SET remark = "' + remark_text + '" WHERE id=' + idx;
-    conn.query(sql, (err, row) => {
+    conn.query(sql, (err) => {
         if (err) {
-            console.log(err)
+            console.log(err);
         } else {
-            res.json({
-                success: true,
-                code: 200
-            })
+            console.log("success remark update");
+            res.sendStatus(200);
+        }
+    })
+})
+
+router.delete('/delete', (req, res) => {
+    const sql = 'DELETE FROM visitortable';
+
+    conn.query(sql, (err) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log("success all delete");
+            res.sendStatus(200);
+        }
+    })
+})
+
+router.delete('/delete/:id', (req, res) => {
+    const idx = req.params.id;
+
+    const sql = 'DELETE FROM visitortable WHERE id = ' + idx;
+    conn.query(sql, (err) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log("success selected delete");
+            res.sendStatus(200);
         }
     })
 })
